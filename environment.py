@@ -16,7 +16,7 @@ class Environment():
 
     __LR_DATA_FOLDER='./industry_data_lag/'
     __TI_DATA_FOLDER='./industry_data/'
-    __INDUSTRY_GROUPING_FILE ='../data/company_data.csv'
+    __INDUSTRY_GROUPING_FILE ='./data/company_data.csv'
     __SINGLE_FOLDER = '/single_data/'
     __GICS_SECTOR = 'GICS Sector'
 
@@ -26,10 +26,10 @@ class Environment():
     def __set_data_folder_path(self):
         
         if not os.path.exists(self.__INDUSTRY_GROUPING_FILE):
-            self.__INDUSTRY_GROUPING_FILE = './data/company_data.csv'
+            self.__INDUSTRY_GROUPING_FILE = './company_data.csv'
             
-    def __get_file_names(self, companies_mask):
-        __DATA_FOLDER='./data/'
+    def __get_file_names(self, companies_mask, use_adjusted=False):
+        __DATA_FOLDER='./data/Adjusted/' if use_adjusted else './data/Raw/'
         file_names = []
         for files in os.listdir(__DATA_FOLDER):
             if files.endswith(".csv") and ("SP500_FULL_NATIVE" not in files) and ("sp500_cet" not in files):
@@ -41,15 +41,15 @@ class Environment():
         return file_names
     
     def __init__(self, parameters, companies_mask=[], industry=None):
-        self.__parameters = parameters
+        self.__parameters: dict = parameters
         self.__test_folder = parameters['method'] + '/test/'
         self.__walks = 0
         SYMBOL='Symbol'
             
         self.__set_data_folder_path()
-        file_names= self.__get_file_names(companies_mask)
+        file_names= self.__get_file_names(companies_mask, use_adjusted=self.__parameters.get('use_adjusted', False))
 
-        grouped_companies_data = pd.read_csv(self.__INDUSTRY_GROUPING_FILE, ',', parse_dates=True)
+        grouped_companies_data = pd.read_csv(self.__INDUSTRY_GROUPING_FILE, delimiter=',', parse_dates=True)
         grouped_companies_data[SYMBOL]= grouped_companies_data[SYMBOL].apply(lambda x: "{0}.csv".format(x))
         
         if (industry is not None):
@@ -184,9 +184,11 @@ class Environment():
         fnombre = fnombre.replace(" ", "_")
         location = folder + fnombre
         if os.path.exists(location):
-            df = pd.read_csv(location, ',', parse_dates=True)
-            df['Date'] = df.Date.astype('datetime64')
+            df = pd.read_csv(location, delimiter=',', parse_dates=True)
+            df['Date'] = df.Date.astype('datetime64[ns]')
             return df
+        else:
+            print_info("[__read_dataframe_for_company] Path does not exist: {0}".format(location), file="stdout", flush=True)
         return pd.DataFrame()
 
     @timeit

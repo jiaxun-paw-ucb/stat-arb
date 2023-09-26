@@ -17,7 +17,7 @@ class Industry(Asset):
         self._TI_columns = []
         self.index_column = 'Date'
         self.categorical_column = 'Asset_ID'
-        self.label = 'OC'
+        self.label = 'OC' # TODO: OPEN - CLOSE
         self.return_label = 'OC Percent'
     
     def __read_data(self, data_type):
@@ -28,7 +28,7 @@ class Industry(Asset):
         else:
             
             returns = pd.read_csv(self.__location, parse_dates=True)
-            returns['Date'] = pd.to_datetime(returns['Date'], dayfirst=True)
+            returns['Date'] = pd.to_datetime(returns['Date'], dayfirst=False)
         return returns
 
     @property

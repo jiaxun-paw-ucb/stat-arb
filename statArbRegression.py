@@ -65,7 +65,7 @@ class StatArbRegression():
     def __init__(self, test: pd.DataFrame, predicted_label='Predicted_OC_perc', k=5, folder=None):
         self.__test = test.copy()
         if (folder is not None and test.empty):
-            self.__test = pd.read_csv(folder+'/totale.csv', ',', parse_dates=True)
+            self.__test = pd.read_csv(folder+'/totale.csv', delimiter=',', parse_dates=True)
 
         self.__k = k
         self.predicted_label = predicted_label

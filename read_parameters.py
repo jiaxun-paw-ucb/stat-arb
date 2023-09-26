@@ -70,6 +70,7 @@ def get_parameters(arguments=None):
         'method': './' + d['method'],
         'nn':int(d['nn']),
         'refit': False,
+        'use_adjusted': d.get('use_adjusted', False)
 
         }
     if ('scale' in d.keys()):

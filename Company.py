@@ -58,7 +58,7 @@ class Company(Asset):
         else:
             
             returns = pd.read_csv(self.__location, parse_dates=True)
-            returns['Date'] = pd.to_datetime(returns['Date'], dayfirst=True)
+            returns['Date'] = pd.to_datetime(returns['Date'], dayfirst=False)
             returns = returns.set_index('Date')
             returns['return'] = returns[self.__CLOSE].pct_change()*100.0
         

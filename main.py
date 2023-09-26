@@ -78,7 +78,7 @@ if __name__ == "__main__":
         strategy1.compute_metrics(output_folder = env.output_folder)
         strategy1.generate_signals(output_folder = env.output_folder)
         strategy1.plot_returns(outputfolder=env.output_folder, parameters=prediction_params)
-        dftot_val.to_csv(env.output_folder+'/totale_validation.csv')
+        dftot_val.to_csv(env.output_folder+'/totale_validation.csv')    
 
     overall_bias_variance.to_csv("./" +prediction_params['method']+'/StatisticalArbitrage/bias_variance.csv')
     overall_chosen_methods.to_csv("./" +prediction_params['method']+'/StatisticalArbitrage/chosen_methods.csv')    

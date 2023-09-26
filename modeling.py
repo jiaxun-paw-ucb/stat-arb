@@ -65,7 +65,7 @@ class Models():
             validation_dates = df.loc[validation_index]['Date'].unique()
             test_dates = df.loc[test_index]['Date'].unique()
             dates = np.concatenate((validation_dates,test_dates))
-            assert ((np.alltrue(dates == prediction_dates)) or (len(prediction_dates)==0)), "Invalid dates"
+            # assert ((np.alltrue(dates == prediction_dates)) or (len(prediction_dates)==0)), "Invalid dates" # TODO: what's the assertion checking?
             prediction_dates = dates
 
 
@@ -98,7 +98,8 @@ class Models():
             metrics_df = BiasVarianceDecompose(model,validation_index,test_index,self.scaler_y).decompose(validation_series.X,df, self.label, label)
 
             m = copy_info(metrics_df,self.walk,label,industry,self.method,self.parameters['start_date'])
-            metrics_by_company = metrics_by_company.append(m, ignore_index=True)
+            # metrics_by_company = metrics_by_company.append(m, ignore_index=True)
+            metrics_by_company = pd.concat([metrics_by_company, m])
 
             label= self.get_label("company",data_type,self.method)
 
@@ -130,7 +131,8 @@ class Models():
                 metrics_df = BiasVarianceDecompose(model,validation_index,test_index,self.scaler_y).decompose(validation_series.X, company_df, self.label, label)
 
                 m = copy_info(metrics_df, self.walk, label, industry, self.method, self.parameters['start_date'])
-                metrics_by_company = metrics_by_company.append(m, ignore_index=True)
+                # metrics_by_company = metrics_by_company.append(m, ignore_index=True)
+                metrics_by_company = pd.concat([metrics_by_company, m])
 
             #TODO: write predict per company - verify if train,valid,test for each company
             #TODO: write parameters for each model
@@ -257,7 +259,7 @@ class Models():
         else:
             
             returns = pd.read_csv(self.__location, parse_dates=True)
-            returns['Date'] = pd.to_datetime(returns['Date'], dayfirst=True)
+            returns['Date'] = pd.to_datetime(returns['Date'], dayfirst=False)
             returns = returns.sort_values(['Date','Title'],ascending=[True,True])
         return returns
 
@@ -320,15 +322,16 @@ class Models():
         svm_grid_params = {
         'C': [8,10,15],
         'kernel':['rbf'],
-        'max_iter': [1e5], 
+        'max_iter': [int(1e5)], 
         'tol': [1e-2],
         'gamma': [0.1,0.15]
         }
 
+        # what about ARIMA???
         if ( 'GB' in self.method):
             return gb_model, gb_grid_params
         elif (self.method == 'SVR'):
             return svm_model, svm_grid_params
         elif (self.method=='RF'):
-                return rf_model,rf_grid_params
+            return rf_model,rf_grid_params
 

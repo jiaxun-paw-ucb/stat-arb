@@ -76,8 +76,7 @@ class BiasVarianceDecompose(object):
         y_test = y_validation[y_validation['Date'].isin(dates_test)]
         
         for title in companies:
-            
-            loss1, loss2, bias, var = compute_measures(all_pred[all_pred['Title'] == title]['Predicted'].values, all_pred[all_pred['Title'] == title]['Expected'].values)
+            loss1, loss2, bias, var = compute_measures(all_pred[all_pred['Title'] == (title,)]['Predicted'].values, all_pred[all_pred['Title'] == (title,)]['Expected'].values)
             mse_overall_val = compute_overall_loss(y_val.loc[y_val['Title']==title], label)
             mse_overall_test = compute_overall_loss(y_test.loc[y_test['Title']==title], label)
             
